@@ -143,3 +143,7 @@ To-do-list.txt
 
 # All CSV files
 *.csv
+
+# Some custom Folders
+time_records/
+time_records_reports/
