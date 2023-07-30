@@ -1,0 +1,15 @@
+Time report
+===========
+
+Total time: 01:57
+
+Time per customer
+-----------------
+Robert Bosch GmbbH: 02:00
+TWT Growth: 00:15
+
+Time per project
+----------------
+Robert Bosch GmbbH / MyHR-Chatbot: 01:00
+Robert Bosch GmbbH / MyHRWeb: 01:00
+TWT Growth / Abrechnung: 00:15
