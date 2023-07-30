@@ -4,7 +4,11 @@
 import csv
 import datetime
 import os
+import sys  # add this import at the beginning of your script
 from typing import List, Dict, Optional
+from collections import defaultdict
+
+TIME_RECORDS_REPORTS_DIR = 'time_records_reports'
 
 
 def load_time_records(filename: str) -> List[Dict[str, str]]:
@@ -44,6 +48,16 @@ def compute_project_time(records: List[Dict[str, str]]) -> Dict[str, int]:
     return {project: round_up_to_nearest_quarter(time) for project, time in project_time.items()}
 
 
+def calculate_totals(records: List[Dict[str, str]]) -> Dict[str, Dict[str, int]]:
+    """Calculate the total time for each customer and project."""
+    totals = defaultdict(lambda: defaultdict(int))
+    for record in records:
+        duration = int(record['Duration'])
+        totals[record['Kunde']]['total'] += duration
+        totals[record['Kunde']][record['Projekt']] += duration
+    return totals
+
+
 def round_up_to_nearest_quarter(time_minutes: int) -> int:
     """Round up time to the nearest quarter hour."""
     return ((time_minutes + 14) // 15) * 15
@@ -55,24 +69,34 @@ def minutes_to_hhmm(time_minutes: int) -> str:
 
 
 def write_report_to_file(filename: str, records: List[Dict[str, str]]) -> None:
-    """Write the time report to a file."""
+    """Write the time report to a file and print to console."""
     total_time = compute_total_time(records)
     customer_time = compute_customer_time(records)
     project_time = compute_project_time(records)
 
+    report = []
+    report.append('Time report')
+    report.append('===========')
+    report.append(f"Total time: {minutes_to_hhmm(total_time)}")
+    report.append('')  # Line break
+    report.append('Time per customer')
+    report.append('-----------------')
+    for customer, time in sorted(customer_time.items(), key=lambda item: item[0].lower()):
+        report.append(f"{customer}: {minutes_to_hhmm(time)}")
+    report.append('')  # Line break
+    report.append('Time per project')
+    report.append('----------------')
+    for project, time in sorted(project_time.items(), key=lambda item: item[0].lower()):
+        report.append(f"{project}: {minutes_to_hhmm(time)}")
+
+    report_str = '\n'.join(report)
+
+    # Write to file
     with open(filename, 'w') as file:
-        file.write('Time report\n')
-        file.write('===========\n\n')
-        file.write(f"Total time: {minutes_to_hhmm(total_time)}\n\n")
-        file.write('Time per customer\n')
-        file.write('-----------------\n')
-        for customer, time in sorted(customer_time.items(), key=lambda item: item[1], reverse=True):
-            file.write(f"{customer}: {minutes_to_hhmm(time)}\n")
-        file.write('\n')
-        file.write('Time per project\n')
-        file.write('----------------\n')
-        for project, time in sorted(project_time.items(), key=lambda item: item[1], reverse=True):
-            file.write(f"{project}: {minutes_to_hhmm(time)}\n")
+        file.write(report_str)
+
+    # Print to console
+    print(report_str)
 
 
 def print_report(records: List[Dict[str, str]]) -> None:
@@ -99,13 +123,18 @@ def print_report(records: List[Dict[str, str]]) -> None:
 
 def main():
     """Main function to handle the command line arguments and user interaction."""
-    print('Generating time report...')
-    time_records_file = datetime.datetime.now().strftime("%Y_%m_%d-time_records.csv")
-    report_file = datetime.datetime.now().strftime("%Y_%m_%d-report.txt")
-    records = load_time_records(time_records_file)
-    write_report_to_file(report_file, records)
-    print_report(records)
-    print(f'Time report written to {report_file}.')
+    # sys.argv[0] is the script name, sys.argv[1] will be the first argument
+    if len(sys.argv) != 2:
+        print("Usage: python report.py <time_records_file>")
+        return
+    filename = sys.argv[1]
+    records = load_time_records(filename)
+    totals = calculate_totals(records)
+
+    os.makedirs(TIME_RECORDS_REPORTS_DIR, exist_ok=True)
+    report_filename = os.path.join(TIME_RECORDS_REPORTS_DIR, f'{os.path.splitext(os.path.basename(filename))[0]}-report.txt')
+    write_report_to_file(report_filename, records)  # Use your existing function here
+
 
 
 if __name__ == "__main__":
