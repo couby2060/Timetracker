@@ -1,4 +1,9 @@
+import os
+import datetime
+
 from typing import List, Dict, Optional
+
+TIME_RECORDS_DIR = 'time_records'
 
 def select_customer(records: List[Dict[str, str]]) -> Optional[str]:
     """Ask the user to select a customer."""
@@ -49,3 +54,26 @@ def print_projects(records: List[Dict[str, str]]) -> None:
         print(f"{i}. {record['Kunde']} / {record['Projekt']}")
     print('-----------------------------')
 
+def select_report_file() -> str:
+    files = [f for f in os.listdir(TIME_RECORDS_DIR) if f.endswith('.csv')]
+    files.sort(key=lambda x: os.path.getmtime(os.path.join(TIME_RECORDS_DIR, x)), reverse=True)
+    latest_files = files[:5]
+
+    print("Select a file to generate report:")
+    for i, file in enumerate(latest_files, 1):
+        print(f"{i}. {file}")
+    print("c. Current date")
+    print("m. Manually enter filename")
+
+    choice = input("Enter your choice: ")
+
+    if choice.isdigit() and 1 <= int(choice) <= 5:
+        return latest_files[int(choice) - 1]
+    elif choice == 'c':
+        today = datetime.date.today()
+        return f"{today:%Y_%m_%d}.csv"
+    elif choice == 'm':
+        return input("Enter the filename: ")
+    else:
+        print("Invalid choice.")
+        return select_report_file()

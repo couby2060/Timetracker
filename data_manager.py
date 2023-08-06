@@ -1,3 +1,4 @@
+from time_tracker import TIME_RECORDS_DIR
 import csv
 import os
 from typing import List, Dict
@@ -26,9 +27,10 @@ def write_projects(filename: str, records: List[Dict[str, str]]) -> None:
 
 def load_time_records(filename: str) -> List[Dict[str, str]]:
     """Load time records from the CSV file."""
-    if not os.path.exists(filename):
+    full_path = os.path.join(TIME_RECORDS_DIR, filename)
+    if not os.path.exists(full_path):
         return []
-    with open(filename, 'r') as file:
+    with open(full_path, 'r') as file:
         reader = csv.DictReader(file, delimiter=';')
         records = list(reader)
     return records
