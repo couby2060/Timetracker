@@ -4,6 +4,7 @@ from data_manager import load_projects, PROJECTS_FILE
 from ui import select_customer, select_project
 from time_tracker import start_time_tracking, stop_time_tracking
 
+
 def main():
     """Main function to handle the command line arguments and user interaction."""
     print('Welcome to the time tracker.')
