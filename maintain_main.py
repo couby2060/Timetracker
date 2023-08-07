@@ -1,5 +1,5 @@
 from data_manager import load_projects, write_projects, PROJECTS_FILE
-from ui import print_customers, print_projects, select_customer, select_project
+from ui import display_customers, display_projects, select_customer, select_project
 from customer_project_manager import add_customer, add_project, delete_customer, delete_project
 
 def main():
@@ -35,9 +35,9 @@ def main():
             records = delete_project(records)
             write_projects(PROJECTS_FILE, records)
         elif choice == 5 and records:
-            print_customers(records)
+            display_customers(records)
         elif choice == 6 and records:
-            print_projects(records)
+            display_projects(records)
         elif choice == 7:
             break
 

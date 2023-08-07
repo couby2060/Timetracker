@@ -38,7 +38,7 @@ def select_project(records: List[Dict[str, str]], customer: str) -> Optional[str
         return None
     return projects[choice-1]
 
-def print_customers(records: List[Dict[str, str]]) -> None:
+def display_customers(records: List[Dict[str, str]]) -> None:
     """Print a list of unique customers."""
     print('Current customers:')
     customers = sorted(set(record['Kunde'] for record in records), key=str.lower)
@@ -46,7 +46,7 @@ def print_customers(records: List[Dict[str, str]]) -> None:
         print(f"{i}. {customer}")
     print('-----------------------------')
 
-def print_projects(records: List[Dict[str, str]]) -> None:
+def display_projects(records: List[Dict[str, str]]) -> None:
     """Print a list of customers and their projects."""
     print('Current customers and projects:')
     records_sorted = sorted(records, key=lambda record: (record['Kunde'].lower(), record['Projekt'].lower()))

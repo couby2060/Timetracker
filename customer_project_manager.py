@@ -1,9 +1,9 @@
 from typing import List, Dict
-from ui import print_projects, print_customers
+from ui import display_projects, display_customers
 
 def delete_customer(records: List[Dict[str, str]]) -> List[Dict[str, str]]:
     """Delete a customer and all their projects."""
-    print_customers(records)
+    display_customers(records)
     delete_index = input('Input the number of the customer you want to delete or type "back" to go back: ')
     if delete_index.lower() == 'back' or not delete_index:
         return records
@@ -17,7 +17,7 @@ def delete_customer(records: List[Dict[str, str]]) -> List[Dict[str, str]]:
 def delete_project(records: List[Dict[str, str]]) -> List[Dict[str, str]]:
     """Delete a specific project."""
     records_sorted = sorted(records, key=lambda record: (record['Kunde'].lower(), record['Projekt'].lower()))
-    print_projects(records_sorted)
+    display_projects(records_sorted)
     delete_index = input('Input the number of the project you want to delete or type "back" to go back: ')
     if delete_index.lower() == 'back' or not delete_index:
         return records
@@ -50,7 +50,7 @@ def add_customer(records: List[Dict[str, str]]) -> List[Dict[str, str]]:
 
 def add_project(records: List[Dict[str, str]]) -> List[Dict[str, str]]:
     """Add a new project for an existing customer."""
-    print_customers(records)
+    display_customers(records)
     customer_index = input('Input the number of the customer for the new project or type "back" to go back: ')
     if customer_index.lower() == 'back' or not customer_index:
         return records

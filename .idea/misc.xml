@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="Black">
+    <option name="executionMode" value="BINARY" />
+    <option name="pathToExecutable" value="/Library/Frameworks/Python.framework/Versions/3.11/bin/black" />
+    <option name="sdkUUID" value="198c6a54-56d9-47e4-9daa-5f5f80de453d" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (Timetracker-jwi)" project-jdk-type="Python SDK" />
 </project>
