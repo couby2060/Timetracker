@@ -1,0 +1,80 @@
+import os
+import datetime
+from typing import List, Dict, Optional
+
+TIME_RECORDS_DIR = 'time_records'
+
+def get_unique_customers(records: List[Dict[str, str]]) -> List[str]:
+    return sorted(set(record['Kunde'] for record in records), key=str.lower)
+
+def get_projects_for_customer(records: List[Dict[str, str]], customer: str) -> List[str]:
+    return sorted([record['Projekt'] for record in records if record['Kunde'] == customer], key=str.lower)
+
+def get_sorted_records(records: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    return sorted(records, key=lambda record: (record['Kunde'].lower(), record['Projekt'].lower()))
+
+def get_latest_files() -> List[str]:
+    files = [f for f in os.listdir(TIME_RECORDS_DIR) if f.endswith('.csv')]
+    files.sort(key=lambda x: os.path.getmtime(os.path.join(TIME_RECORDS_DIR, x)), reverse=True)
+    return files[:5]
+
+def get_user_choice(prompt: str, options: List[str]) -> Optional[int]:
+    print(prompt)
+    for i, option in enumerate(options):
+        print(f"{i+1}. {option}")
+    try:
+        choice = int(input('Input the number of your selection: '))
+        if 1 <= choice <= len(options):
+            return choice
+        print(f'Invalid input. Please input a number between 1 and {len(options)}.')
+    except ValueError:
+        print('Invalid input. Please input a number.')
+    return None
+
+# Refaktorierte UI-Funktionen
+
+def select_customer_ui(records: List[Dict[str, str]]) -> Optional[str]:
+    customers = get_unique_customers(records)
+    choice = get_user_choice('Please select a customer.', customers)
+    return None if choice is None else customers[choice-1]
+
+def select_project_ui(records: List[Dict[str, str]], customer: str) -> Optional[str]:
+    projects = get_projects_for_customer(records, customer)
+    choice = get_user_choice('Please select a project.', projects)
+    return None if choice is None else projects[choice-1]
+
+def display_customers_ui(records: List[Dict[str, str]]) -> None:
+    print('Current customers:')
+    customers = get_unique_customers(records)
+    for i, customer in enumerate(customers, start=1):
+        print(f"{i}. {customer}")
+    print('-----------------------------')
+
+def display_projects_ui(records: List[Dict[str, str]]) -> None:
+    print('Current customers and projects:')
+    records_sorted = get_sorted_records(records)
+    for i, record in enumerate(records_sorted, start=1):
+        print(f"{i}. {record['Kunde']} / {record['Projekt']}")
+    print('-----------------------------')
+
+def select_report_file_ui() -> str:
+    latest_files = get_latest_files()
+
+    print("Select a file to generate report:")
+    for i, file in enumerate(latest_files, 1):
+        print(f"{i}. {file}")
+    print("c. Current date")
+    print("m. Manually enter filename")
+
+    choice = input("Enter your choice: ")
+
+    if choice.isdigit() and 1 <= int(choice) <= 5:
+        return latest_files[int(choice) - 1]
+    elif choice == 'c':
+        today = datetime.date.today()
+        return f"{today:%Y_%m_%d}.csv"
+    elif choice == 'm':
+        return input("Enter the filename: ")
+    else:
+        print("Invalid choice.")
+        return select_report_file_ui()
