@@ -13,6 +13,7 @@ from reporting import write_report_to_file, print_report, TIME_RECORDS_REPORTS_D
 from ui import select_report_file
 from time_tracker import TIME_RECORDS_DIR
 
+#tbd was macht der test und bringt der was?
 
 def test_calculate_totals():
     records = [
